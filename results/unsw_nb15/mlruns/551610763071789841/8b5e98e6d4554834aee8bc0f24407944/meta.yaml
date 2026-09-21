@@ -1,0 +1,14 @@
+artifact_uri: file:E:\nids\results\unsw_nb15/mlruns/551610763071789841/8b5e98e6d4554834aee8bc0f24407944/artifacts
+end_time: 1788102679602
+entry_point_name: ''
+experiment_id: '551610763071789841'
+lifecycle_stage: active
+run_id: 8b5e98e6d4554834aee8bc0f24407944
+run_name: idrandom_forest_unsw_nb15
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1788102638804
+status: 3
+tags: []
+user_id: Rishika Snehi

@@ -1,0 +1,83 @@
+XAI SAMPLE REPORT — cic_ids2017
+
+----------------------------------------------------------------------
+ALERT #1 (test sample index 4)
+Verdict: Attack  |  Confidence: 50.1%
+Top contributing features:
+    - fwd_packet_length_mean: 2.377 (typical benign: -0.007, 2.38 std devs above normal)
+    - total_fwd_packets: 0.958 (typical benign: 0.015, 0.95 std devs above normal)
+    - protocol: 1.324 (typical benign: 0.002, 1.32 std devs above normal)
+    - fwd_packet_length_std: -0.897 (typical benign: -0.015, -0.9 std devs below normal)
+    - flow_iat_std: -0.955 (typical benign: 0.004, -0.97 std devs below normal)
+
+Explanation (Local Template (OFFLINE FALLBACK - not a real LLM)):
+  This traffic was flagged as a potential ATTACK with 50.1% model confidence. The strongest signal was
+fwd_packet_length_mean, along with 4 other feature(s) deviating from typical benign traffic
+patterns. This pattern is consistent with known DoS-style traffic characteristics. Recommended
+action: review the source of this flow and consider temporary monitoring or rate-limiting if the
+pattern repeats.
+
+----------------------------------------------------------------------
+ALERT #2 (test sample index 11)
+Verdict: Attack  |  Confidence: 60.1%
+Top contributing features:
+    - total_fwd_packets: -1.254 (typical benign: 0.015, -1.28 std devs below normal)
+    - fwd_packet_length_mean: -0.915 (typical benign: -0.007, -0.91 std devs below normal)
+    - flow_duration: 0.945 (typical benign: 0.003, 0.95 std devs above normal)
+    - total_backward_packets: -0.725 (typical benign: 0.004, -0.73 std devs below normal)
+    - protocol: -1.093 (typical benign: 0.002, -1.09 std devs below normal)
+
+Explanation (Local Template (OFFLINE FALLBACK - not a real LLM)):
+  This traffic was flagged as a potential ATTACK with 60.1% model confidence. The strongest signal was
+total_fwd_packets, along with 4 other feature(s) deviating from typical benign traffic patterns.
+This pattern is consistent with known DoS-style traffic characteristics. Recommended action: review
+the source of this flow and consider temporary monitoring or rate-limiting if the pattern repeats.
+
+----------------------------------------------------------------------
+ALERT #3 (test sample index 16)
+Verdict: Attack  |  Confidence: 60.5%
+Top contributing features:
+    - total_backward_packets: 1.359 (typical benign: 0.004, 1.36 std devs above normal)
+    - protocol: 1.324 (typical benign: 0.002, 1.32 std devs above normal)
+    - flow_duration: -0.694 (typical benign: 0.003, -0.7 std devs below normal)
+    - total_fwd_packets: -0.622 (typical benign: 0.015, -0.64 std devs below normal)
+    - fwd_packet_length_min: -0.609 (typical benign: 0.013, -0.61 std devs below normal)
+
+Explanation (Local Template (OFFLINE FALLBACK - not a real LLM)):
+  This traffic was flagged as a potential ATTACK with 60.5% model confidence. The strongest signal was
+total_backward_packets, along with 4 other feature(s) deviating from typical benign traffic
+patterns. This pattern is consistent with known DoS-style traffic characteristics. Recommended
+action: review the source of this flow and consider temporary monitoring or rate-limiting if the
+pattern repeats.
+
+----------------------------------------------------------------------
+ALERT #4 (test sample index 0)
+Verdict: Normal  |  Confidence: 52.5%
+Top contributing features:
+    - total_fwd_packets: -0.938 (typical benign: 0.015, -0.96 std devs below normal)
+    - protocol: 1.324 (typical benign: 0.002, 1.32 std devs above normal)
+    - fwd_packet_length_max: -0.75 (typical benign: -0.0, -0.75 std devs below normal)
+    - total_length_of_fwd_packets: -0.485 (typical benign: 0.014, -0.49 std devs below normal)
+    - fwd_packet_length_min: 0.478 (typical benign: 0.013, 0.46 std devs above normal)
+
+Explanation (Local Template (OFFLINE FALLBACK - not a real LLM)):
+  This traffic was classified as NORMAL with 52.5% model confidence. Feature values were broadly
+consistent with typical benign traffic, though total_fwd_packets showed some deviation worth noting
+if this pattern becomes frequent. Recommended action: no immediate action needed; continue routine
+monitoring.
+
+----------------------------------------------------------------------
+ALERT #5 (test sample index 1)
+Verdict: Normal  |  Confidence: 70.8%
+Top contributing features:
+    - fwd_packet_length_mean: 0.975 (typical benign: -0.007, 0.98 std devs above normal)
+    - total_fwd_packets: 0.958 (typical benign: 0.015, 0.95 std devs above normal)
+    - fwd_packet_length_std: -0.905 (typical benign: -0.015, -0.91 std devs below normal)
+    - flow_duration: -0.92 (typical benign: 0.003, -0.93 std devs below normal)
+    - fwd_packet_length_min: -0.947 (typical benign: 0.013, -0.94 std devs below normal)
+
+Explanation (Local Template (OFFLINE FALLBACK - not a real LLM)):
+  This traffic was classified as NORMAL with 70.8% model confidence. Feature values were broadly
+consistent with typical benign traffic, though fwd_packet_length_mean showed some deviation worth
+noting if this pattern becomes frequent. Recommended action: no immediate action needed; continue
+routine monitoring.

@@ -1,0 +1,55 @@
+======================================================================
+STAGE 2 PIPELINE — dataset: cic_ids2017
+======================================================================
+
+>>> Loading Stage 1 outputs
+Train: (5194, 12), SMOTE-balanced classes: {0: 2597, 1: 2597}
+Val:   (750, 12), REAL class distribution: {0: 599, 1: 151} (used ONLY for threshold tuning)
+Test:  (1000, 12), REAL class distribution: {0: 799, 1: 201} (used ONLY for final evaluation)
+
+>>> Training [1/4] Baseline Random Forest (unpruned)
+  Threshold tuned on validation set: 0.250 (val precision=0.216, val recall=0.821, val F1=0.343)
+  TEST SET (threshold=0.250): precision=0.2119, recall=0.7960, f1=0.3347, roc_auc=0.5036, pr_auc=0.1918, accuracy=0.3640 (secondary), latency=0.0170ms/sample, size=11464.7KB
+
+>>> Training [2/4] IDRandom-Forest (feature-importance + ccp_alpha pruning)
+  Threshold tuned on validation set: 0.214 (val precision=0.211, val recall=0.894, val F1=0.341)
+  TEST SET (threshold=0.214): precision=0.2137, recall=0.8856, f1=0.3443, roc_auc=0.5043, pr_auc=0.1907, accuracy=0.3220 (secondary), latency=0.0168ms/sample, size=9420.0KB
+    Baseline RF: cv_accuracy=0.8497, avg_nodes_per_tree=1463.3
+    ccp_alpha=0.000205: cv_accuracy=0.8491, avg_nodes_per_tree=1201.6 (ACCEPTED)
+    ccp_alpha=0.000305: cv_accuracy=0.8410 — rejected (below tolerance)
+    ccp_alpha=0.000361: cv_accuracy=0.8398 — rejected (below tolerance)
+    ccp_alpha=0.000440: cv_accuracy=0.8373 — rejected (below tolerance)
+    ccp_alpha=0.000547: cv_accuracy=0.8227 — rejected (below tolerance)
+    ccp_alpha=0.000774: cv_accuracy=0.8092 — rejected (below tolerance)
+    ccp_alpha=0.007741: cv_accuracy=0.6255 — rejected (below tolerance)
+    SELECTED ccp_alpha=0.000205 -> avg_nodes_per_tree=1201.6 (17.9% smaller trees than baseline, within 0.5% accuracy tolerance)
+
+>>> Training [3/4] XGBoost
+  NOTE: XGBoost not installed in this environment (no network access to pip install). Falling back to sklearn HistGradientBoostingClassifier as a stand-in — run `pip install xgboost` on your machine and re-run for real XGBoost numbers.
+  Threshold tuned on validation set: 0.014 (val precision=0.203, val recall=0.987, val F1=0.337)
+  TEST SET (threshold=0.014): precision=0.1990, recall=0.9751, f1=0.3305, roc_auc=0.5053, pr_auc=0.2009, accuracy=0.2060 (secondary), latency=0.0094ms/sample, size=595.4KB
+
+>>> Training [4/4] LightGBM
+  NOTE: LightGBM not installed in this environment (no network access to pip install). Falling back to sklearn HistGradientBoostingClassifier as a stand-in — run `pip install lightgbm` on your machine and re-run for real LightGBM numbers.
+  Threshold tuned on validation set: 0.045 (val precision=0.203, val recall=0.987, val F1=0.337)
+  TEST SET (threshold=0.045): precision=0.2002, recall=0.9801, f1=0.3325, roc_auc=0.5086, pr_auc=0.1970, accuracy=0.2090 (secondary), latency=0.0091ms/sample, size=631.3KB
+
+>>> Building comparison table (recall/precision/F1/AUC first — accuracy is secondary)
+                               model_name  decision_threshold   recall  precision  f1_score  roc_auc   pr_auc  accuracy  majority_class_baseline_accuracy  avg_latency_ms_per_sample  model_size_kb  train_time_sec
+                   Baseline Random Forest            0.250000 0.796020   0.211921  0.334728 0.503565 0.191753     0.364                             0.799                   0.016951       11464.70           1.240
+                          IDRandom-Forest            0.214388 0.885572   0.213685  0.344294 0.504349 0.190656     0.322                             0.799                   0.016801        9420.01          22.130
+ XGBoost [FALLBACK: HistGradientBoosting]            0.014088 0.975124   0.198985  0.330523 0.505290 0.200930     0.206                             0.799                   0.009412         595.41           0.269
+LightGBM [FALLBACK: HistGradientBoosting]            0.044607 0.980100   0.200203  0.332489 0.508583 0.196972     0.209                             0.799                   0.009133         631.29           0.267
+
+>>> Generating comparison visualizations
+  Saved confusion_matrices.png and comparison_chart.png to ../results/cic_ids2017
+
+======================================================================
+HEADLINE RESULT — IDRandom-Forest vs Baseline Random Forest
+======================================================================
+Latency reduction: 0.9%
+Model size reduction: 17.8%
+Recall (attack detection) change: +0.0896  <- the metric that actually matters here
+Accuracy change: -0.0420 (secondary metric, see metrics.py docstring)
+
+CORRECT CLAIM FOR YOUR REPORT: "IDRandom-Forest reduces model complexity and inference latency while maintaining comparable detection performance (recall/F1) to the baseline Random Forest." Do NOT claim IDRandom-Forest improves detection quality unless recall_delta above is clearly positive on REAL data — pruning is a compression/latency technique, not a detection-quality technique.

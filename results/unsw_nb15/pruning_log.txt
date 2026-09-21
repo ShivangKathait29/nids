@@ -1,0 +1,9 @@
+Baseline RF: cv_accuracy=0.8848, avg_nodes_per_tree=1323.2
+ccp_alpha=0.000181: cv_accuracy=0.8847, avg_nodes_per_tree=1068.7 (ACCEPTED)
+ccp_alpha=0.000282: cv_accuracy=0.8797 — rejected (below tolerance)
+ccp_alpha=0.000331: cv_accuracy=0.8788 — rejected (below tolerance)
+ccp_alpha=0.000432: cv_accuracy=0.8729 — rejected (below tolerance)
+ccp_alpha=0.000580: cv_accuracy=0.8643 — rejected (below tolerance)
+ccp_alpha=0.000853: cv_accuracy=0.8478 — rejected (below tolerance)
+ccp_alpha=0.017063: cv_accuracy=0.7284 — rejected (below tolerance)
+SELECTED ccp_alpha=0.000181 -> avg_nodes_per_tree=1068.7 (19.2% smaller trees than baseline, within 0.5% accuracy tolerance)

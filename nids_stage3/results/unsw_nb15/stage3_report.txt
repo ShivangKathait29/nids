@@ -1,0 +1,33 @@
+======================================================================
+STAGE 3 PIPELINE — dataset: unsw_nb15, stage2_model: idrandom_forest, filter_kernel: sgd_log_loss
+======================================================================
+
+>>> Loading Stage 1 outputs
+Train: (5452, 12) (SMOTE-balanced), Val: (750, 12) (REAL distribution: {0: 629, 1: 121}), Test: (1000, 12) (REAL distribution: {0: 839, 1: 161})
+
+>>> [1/4] Training Stage 1 filter (SGD-based Linear Filter (not an SVM)) and tuning short-circuit threshold against the REAL-distribution validation set
+  Filter train time: 0.021s
+  Selected threshold=0.200: 0.5% of traffic short-circuited, 0.83% of ALL real attacks missed (1.0/121.0) (within 2.0% safety tolerance; short-circuit-bucket purity leak rate: 25.00%, diagnostic only)
+
+>>> [2/4] Training Stage 2 classifier: idrandom_forest
+  IDRandomForest trained in 25.86s
+  Stage 2 decision threshold tuned on validation set: 0.199 (val precision=0.173, val recall=0.843)
+
+>>> [3/4] Building two-stage cascade pipeline
+
+>>> [4/4] Benchmarking two-stage cascade vs single-stage (Stage 2 alone) baseline
+
+                                                                 pipeline  precision   recall  f1_score  accuracy  roc_auc   pr_auc  majority_class_baseline_accuracy  accuracy_above_majority_baseline  avg_latency_ms_per_sample  fraction_via_stage2
+               Single-Stage (IDRandomForest alone, tuned threshold=0.199)   0.149545 0.714286  0.247312     0.300 0.496554 0.171594                             0.839                            -0.539                   0.017687                 1.00
+Two-Stage Hybrid (Linear Filter -> IDRandomForest, tuned threshold=0.199)   0.149606 0.708075  0.247021     0.305 0.498260 0.172199                             0.839                            -0.534                   0.017903                 0.99
+
+======================================================================
+HEADLINE RESULT — Two-Stage Cascade vs Single-Stage Baseline
+======================================================================
+Traffic resolved at Stage 1 alone (fast path): 1.0% (10/1000 samples)
+Traffic passed to Stage 2 (slow path): 99.0% (990/1000 samples)
+End-to-end latency reduction: -1.2%
+Accuracy change: +0.0050
+Recall (attack detection) change: -0.0062 (no meaningful loss)
+
+Saved threshold_search.png and latency_comparison.png to ../results/unsw_nb15

@@ -1,0 +1,6 @@
+destination_id: m-ee9604ab84a945d48189c053ce22ab1b
+destination_type: MODEL_OUTPUT
+source_id: m-ee9604ab84a945d48189c053ce22ab1b
+source_type: RUN_OUTPUT
+step: 0
+tags: {}

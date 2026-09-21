@@ -1,0 +1,81 @@
+XAI SAMPLE REPORT — unsw_nb15
+
+----------------------------------------------------------------------
+ALERT #1 (test sample index 276)
+Verdict: Attack  |  Confidence: 55.2%
+Top contributing features:
+    - sttl: 1.354 (typical benign: 0.005, 1.35 std devs above normal)
+    - dttl: -0.838 (typical benign: 0.009, -0.84 std devs below normal)
+    - spkts: 0.824 (typical benign: -0.0, 0.83 std devs above normal)
+    - sbytes: -0.845 (typical benign: 0.004, -0.85 std devs below normal)
+    - dinpkt: -0.837 (typical benign: -0.005, -0.83 std devs below normal)
+
+Explanation (Local Template (OFFLINE FALLBACK - not a real LLM)):
+  This traffic was flagged as a potential ATTACK with 55.2% model confidence. The strongest signal was
+sttl, along with 4 other feature(s) deviating from typical benign traffic patterns. This pattern is
+consistent with known DoS-style traffic characteristics. Recommended action: review the source of
+this flow and consider temporary monitoring or rate-limiting if the pattern repeats.
+
+----------------------------------------------------------------------
+ALERT #2 (test sample index 334)
+Verdict: Attack  |  Confidence: 56.9%
+Top contributing features:
+    - dttl: 1.453 (typical benign: 0.009, 1.44 std devs above normal)
+    - sttl: 1.354 (typical benign: 0.005, 1.35 std devs above normal)
+    - spkts: -1.456 (typical benign: -0.0, -1.46 std devs below normal)
+    - dpkts: -1.256 (typical benign: 0.008, -1.26 std devs below normal)
+    - sload: -0.75 (typical benign: 0.002, -0.75 std devs below normal)
+
+Explanation (Local Template (OFFLINE FALLBACK - not a real LLM)):
+  This traffic was flagged as a potential ATTACK with 56.9% model confidence. The strongest signal was
+dttl, along with 4 other feature(s) deviating from typical benign traffic patterns. This pattern is
+consistent with known DoS-style traffic characteristics. Recommended action: review the source of
+this flow and consider temporary monitoring or rate-limiting if the pattern repeats.
+
+----------------------------------------------------------------------
+ALERT #3 (test sample index 353)
+Verdict: Attack  |  Confidence: 52.8%
+Top contributing features:
+    - dttl: -0.838 (typical benign: 0.009, -0.84 std devs below normal)
+    - sttl: -0.885 (typical benign: 0.005, -0.89 std devs below normal)
+    - rate: -0.91 (typical benign: 0.006, -0.91 std devs below normal)
+    - dbytes: -0.998 (typical benign: 0.003, -0.99 std devs below normal)
+    - dur: -0.894 (typical benign: 0.009, -0.9 std devs below normal)
+
+Explanation (Local Template (OFFLINE FALLBACK - not a real LLM)):
+  This traffic was flagged as a potential ATTACK with 52.8% model confidence. The strongest signal was
+dttl, along with 4 other feature(s) deviating from typical benign traffic patterns. This pattern is
+consistent with known DoS-style traffic characteristics. Recommended action: review the source of
+this flow and consider temporary monitoring or rate-limiting if the pattern repeats.
+
+----------------------------------------------------------------------
+ALERT #4 (test sample index 0)
+Verdict: Normal  |  Confidence: 79.8%
+Top contributing features:
+    - sttl: 1.354 (typical benign: 0.005, 1.35 std devs above normal)
+    - dur: -0.975 (typical benign: 0.009, -0.98 std devs below normal)
+    - dpkts: 0.952 (typical benign: 0.008, 0.94 std devs above normal)
+    - dttl: -0.519 (typical benign: 0.009, -0.53 std devs below normal)
+    - sbytes: 0.817 (typical benign: 0.004, 0.81 std devs above normal)
+
+Explanation (Local Template (OFFLINE FALLBACK - not a real LLM)):
+  This traffic was classified as NORMAL with 79.8% model confidence. Feature values were broadly
+consistent with typical benign traffic, though sttl showed some deviation worth noting if this
+pattern becomes frequent. Recommended action: no immediate action needed; continue routine
+monitoring.
+
+----------------------------------------------------------------------
+ALERT #5 (test sample index 1)
+Verdict: Normal  |  Confidence: 70.2%
+Top contributing features:
+    - dpkts: 2.213 (typical benign: 0.008, 2.19 std devs above normal)
+    - sttl: 1.354 (typical benign: 0.005, 1.35 std devs above normal)
+    - dbytes: 1.82 (typical benign: 0.003, 1.81 std devs above normal)
+    - dttl: -0.519 (typical benign: 0.009, -0.53 std devs below normal)
+    - rate: -0.596 (typical benign: 0.006, -0.59 std devs below normal)
+
+Explanation (Local Template (OFFLINE FALLBACK - not a real LLM)):
+  This traffic was classified as NORMAL with 70.2% model confidence. Feature values were broadly
+consistent with typical benign traffic, though dpkts showed some deviation worth noting if this
+pattern becomes frequent. Recommended action: no immediate action needed; continue routine
+monitoring.

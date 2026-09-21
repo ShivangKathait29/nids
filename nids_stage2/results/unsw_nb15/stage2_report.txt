@@ -1,0 +1,47 @@
+======================================================================
+STAGE 2 PIPELINE — dataset: unsw_nb15
+======================================================================
+
+>>> Loading Stage 1 outputs
+Train: (6710, 12), balanced classes: {0: 3355, 1: 3355}
+Test:  (1000, 12), real class distribution: {0: 839, 1: 161}
+
+>>> Training [1/4] Baseline Random Forest (unpruned)
+  accuracy=0.8200, latency=0.0223ms/sample, size=12884.9KB, train_time=1.54s
+
+>>> Training [2/4] IDRandom-Forest (feature-importance + ccp_alpha pruning)
+  accuracy=0.8160, latency=0.0188ms/sample, size=10566.7KB, ccp_alpha=0.000147
+    Baseline RF: cv_accuracy=0.8969, avg_nodes_per_tree=1645.1
+    ccp_alpha=0.000147: cv_accuracy=0.8957, avg_nodes_per_tree=1348.4 (ACCEPTED)
+    ccp_alpha=0.000236: cv_accuracy=0.8912 — rejected (below tolerance)
+    ccp_alpha=0.000275: cv_accuracy=0.8903 — rejected (below tolerance)
+    ccp_alpha=0.000356: cv_accuracy=0.8853 — rejected (below tolerance)
+    ccp_alpha=0.000464: cv_accuracy=0.8751 — rejected (below tolerance)
+    ccp_alpha=0.000666: cv_accuracy=0.8633 — rejected (below tolerance)
+    ccp_alpha=0.018092: cv_accuracy=0.7182 — rejected (below tolerance)
+    SELECTED ccp_alpha=0.000147 -> avg_nodes_per_tree=1348.4 (18.0% smaller trees than baseline, within 0.5% accuracy tolerance)
+
+>>> Training [3/4] XGBoost
+  NOTE: XGBoost not installed in this environment (no network access to pip install). Falling back to sklearn HistGradientBoostingClassifier as a stand-in — run `pip install xgboost` on your machine and re-run for real XGBoost numbers.
+  accuracy=0.8200, latency=0.0108ms/sample, size=637.6KB
+
+>>> Training [4/4] LightGBM
+  NOTE: LightGBM not installed in this environment (no network access to pip install). Falling back to sklearn HistGradientBoostingClassifier as a stand-in — run `pip install lightgbm` on your machine and re-run for real LightGBM numbers.
+  accuracy=0.8200, latency=0.0110ms/sample, size=649.3KB
+
+>>> Building comparison table
+                               model_name  accuracy  precision   recall  f1_score  roc_auc  avg_latency_ms_per_sample  model_size_kb  train_time_sec
+                   Baseline Random Forest     0.820   0.148148 0.024845  0.042553 0.513107                   0.022321       12884.85           1.543
+                          IDRandom-Forest     0.816   0.151515 0.031056  0.051546 0.504149                   0.018801       10566.72          29.247
+ XGBoost [FALLBACK: HistGradientBoosting]     0.820   0.212121 0.043478  0.072165 0.499759                   0.010845         637.58           0.350
+LightGBM [FALLBACK: HistGradientBoosting]     0.820   0.086957 0.012422  0.021739 0.510457                   0.010980         649.28           0.356
+
+>>> Generating comparison visualizations
+  Saved confusion_matrices.png and comparison_chart.png to ../results/unsw_nb15
+
+======================================================================
+HEADLINE RESULT — IDRandom-Forest vs Baseline Random Forest
+======================================================================
+Latency reduction: 15.8%
+Model size reduction: 18.0%
+Accuracy change: -0.0040 (small tradeoff)

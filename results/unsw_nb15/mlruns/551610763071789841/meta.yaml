@@ -1,0 +1,9 @@
+artifact_location: file:E:\nids\results\unsw_nb15/mlruns/551610763071789841
+creation_time: 1788015859356
+effective_trace_archival_retention: null
+experiment_id: '551610763071789841'
+last_update_time: 1788015859356
+lifecycle_stage: active
+name: nids_unsw_nb15
+trace_location: null
+workspace: default

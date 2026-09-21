@@ -1,0 +1,10 @@
+artifact_location: file:E:\nids\results\unsw_nb15/mlruns/551610763071789841/models/m-ee9604ab84a945d48189c053ce22ab1b/artifacts
+creation_timestamp: 1788102601881
+experiment_id: '551610763071789841'
+last_updated_timestamp: 1788102638676
+model_id: m-ee9604ab84a945d48189c053ce22ab1b
+model_type: null
+name: baseline_rf
+source_run_id: 5250c639faa24018bb4bb9c5786419f7
+status: 2
+status_message: null

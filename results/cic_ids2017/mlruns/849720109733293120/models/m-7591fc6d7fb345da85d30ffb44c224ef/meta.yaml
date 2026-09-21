@@ -1,0 +1,10 @@
+artifact_location: file:E:\nids\results\cic_ids2017/mlruns/849720109733293120/models/m-7591fc6d7fb345da85d30ffb44c224ef/artifacts
+creation_timestamp: 1788101216297
+experiment_id: '849720109733293120'
+last_updated_timestamp: 1788101235721
+model_id: m-7591fc6d7fb345da85d30ffb44c224ef
+model_type: null
+name: baseline_rf
+source_run_id: b51fef3bee3c4d3ea987a045751a70f1
+status: 2
+status_message: null

@@ -1,0 +1,36 @@
+======================================================================
+STAGE 3 PIPELINE — dataset: cic_ids2017, stage2_model: idrandom_forest, filter_kernel: sgd_log_loss
+======================================================================
+
+>>> Loading Stage 1 outputs
+Train: (5194, 12) (SMOTE-balanced), Val: (750, 12) (REAL distribution: {0: 599, 1: 151}), Test: (1000, 12) (REAL distribution: {0: 799, 1: 201})
+
+>>> [1/4] Training Stage 1 filter (SGD-based Linear Filter (not an SVM)) and tuning short-circuit threshold against the REAL-distribution validation set
+  Filter train time: 0.024s
+  Selected threshold=0.150: 1.5% of traffic short-circuited, 1.32% of ALL real attacks missed (2.0/151.0) (within 2.0% safety tolerance; short-circuit-bucket purity leak rate: 18.18%, diagnostic only)
+
+>>> [2/4] Training Stage 2 classifier: idrandom_forest
+  IDRandomForest trained in 27.07s
+  Stage 2 decision threshold tuned on validation set: 0.214 (val precision=0.211, val recall=0.894)
+
+>>> [3/4] Building two-stage cascade pipeline
+
+>>> [4/4] Benchmarking two-stage cascade vs single-stage (Stage 2 alone) baseline
+
+                                                                 pipeline  precision   recall  f1_score  accuracy  roc_auc   pr_auc  majority_class_baseline_accuracy  accuracy_above_majority_baseline  avg_latency_ms_per_sample  fraction_via_stage2
+               Single-Stage (IDRandomForest alone, tuned threshold=0.214)   0.213685 0.885572  0.344294     0.322 0.504349 0.190656                             0.799                            -0.477                   0.020538                1.000
+Two-Stage Hybrid (Linear Filter -> IDRandomForest, tuned threshold=0.214)   0.215236 0.885572  0.346304     0.328 0.506392 0.191056                             0.799                            -0.471                   0.022136                0.988
+
+======================================================================
+HEADLINE RESULT — Two-Stage Cascade vs Single-Stage Baseline
+======================================================================
+Traffic resolved at Stage 1 alone (fast path): 1.2% (12/1000 samples)
+Traffic passed to Stage 2 (slow path): 98.8% (988/1000 samples)
+End-to-end latency reduction: -7.8%
+  ⚠️  Cascade is SLOWER than single-stage. This happens when the short-circuit fraction (1.2%) is too small for the compute saved on skipped Stage 2 calls to outweigh (a) the Stage 1 filter's own inference cost on 100% of traffic, and (b) Python-level orchestration overhead (masking/indexing) in the cascade — both roughly fixed costs that only pay off once a meaningfully larger fraction of traffic can be safely short-circuited. Not a bug; expected when the filter can't separate much of the traffic confidently (as on this signal-free synthetic data). On real, separable data, expect a much higher short-circuit fraction and a genuine latency win — if it's still negative there, that's worth investigating.
+Accuracy change: +0.0060
+Recall (attack detection) change: +0.0000
+  Test-set attack leakage from Stage 1 shortcut: 0.00% (0/201 real test-set attacks silently short-circuited), configured tolerance: 2.0%
+  Recall drop is within the budgeted leakage tolerance — this is the expected, by-design cost of the cascade, not a detection-quality regression.
+
+Saved threshold_search.png and latency_comparison.png to ../results/cic_ids2017

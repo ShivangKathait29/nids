@@ -1,0 +1,10 @@
+artifact_location: file:E:\nids\results\cic_ids2017/mlruns/849720109733293120/models/m-ec732507da49415fa30f1fafc5f5a5c9/artifacts
+creation_timestamp: 1788194295049
+experiment_id: '849720109733293120'
+last_updated_timestamp: 1788194306459
+model_id: m-ec732507da49415fa30f1fafc5f5a5c9
+model_type: null
+name: lightgbm
+source_run_id: cf3d9de863e94bc99d5935ddf77c92a7
+status: 3
+status_message: null

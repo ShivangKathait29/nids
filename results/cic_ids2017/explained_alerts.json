@@ -1,0 +1,282 @@
+[
+  {
+    "prediction": "Attack",
+    "confidence": 0.5006,
+    "contributing_features": [
+      {
+        "feature": "fwd_packet_length_mean",
+        "value": 2.377,
+        "typical_benign_value": -0.007,
+        "deviation_std": 2.38,
+        "direction": "above normal"
+      },
+      {
+        "feature": "total_fwd_packets",
+        "value": 0.958,
+        "typical_benign_value": 0.015,
+        "deviation_std": 0.95,
+        "direction": "above normal"
+      },
+      {
+        "feature": "protocol",
+        "value": 1.324,
+        "typical_benign_value": 0.002,
+        "deviation_std": 1.32,
+        "direction": "above normal"
+      },
+      {
+        "feature": "fwd_packet_length_std",
+        "value": -0.897,
+        "typical_benign_value": -0.015,
+        "deviation_std": -0.9,
+        "direction": "below normal"
+      },
+      {
+        "feature": "flow_iat_std",
+        "value": -0.955,
+        "typical_benign_value": 0.004,
+        "deviation_std": -0.97,
+        "direction": "below normal"
+      }
+    ],
+    "retrieved_knowledge": [
+      {
+        "attack_type": "DoS",
+        "text": "Denial of Service (single-source) attacks aim to exhaust a target's resources from one attacking host, rather than the many-source pattern of DDoS. Typical signatures: sustained high-rate traffic from a single source IP, often repetitive request patterns.",
+        "similarity": 0.246
+      },
+      {
+        "attack_type": "Generic",
+        "text": "Generic attacks (as labeled in UNSW-NB15) represent a mix of techniques that don't fall into one specific category, often testing multiple attack primitives against a target. Typical signatures: varied protocol/flag usage inconsistent with normal application traffic.",
+        "similarity": 0.144
+      }
+    ],
+    "explanation_text": "This traffic was flagged as a potential ATTACK with 50.1% model confidence. The strongest signal was\nfwd_packet_length_mean, along with 4 other feature(s) deviating from typical benign traffic\npatterns. This pattern is consistent with known DoS-style traffic characteristics. Recommended\naction: review the source of this flow and consider temporary monitoring or rate-limiting if the\npattern repeats.",
+    "llm_provider_used": "Local Template (OFFLINE FALLBACK - not a real LLM)",
+    "sample_index": 4
+  },
+  {
+    "prediction": "Attack",
+    "confidence": 0.6009,
+    "contributing_features": [
+      {
+        "feature": "total_fwd_packets",
+        "value": -1.254,
+        "typical_benign_value": 0.015,
+        "deviation_std": -1.28,
+        "direction": "below normal"
+      },
+      {
+        "feature": "fwd_packet_length_mean",
+        "value": -0.915,
+        "typical_benign_value": -0.007,
+        "deviation_std": -0.91,
+        "direction": "below normal"
+      },
+      {
+        "feature": "flow_duration",
+        "value": 0.945,
+        "typical_benign_value": 0.003,
+        "deviation_std": 0.95,
+        "direction": "above normal"
+      },
+      {
+        "feature": "total_backward_packets",
+        "value": -0.725,
+        "typical_benign_value": 0.004,
+        "deviation_std": -0.73,
+        "direction": "below normal"
+      },
+      {
+        "feature": "protocol",
+        "value": -1.093,
+        "typical_benign_value": 0.002,
+        "deviation_std": -1.09,
+        "direction": "below normal"
+      }
+    ],
+    "retrieved_knowledge": [
+      {
+        "attack_type": "DoS",
+        "text": "Denial of Service (single-source) attacks aim to exhaust a target's resources from one attacking host, rather than the many-source pattern of DDoS. Typical signatures: sustained high-rate traffic from a single source IP, often repetitive request patterns.",
+        "similarity": 0.246
+      },
+      {
+        "attack_type": "Generic",
+        "text": "Generic attacks (as labeled in UNSW-NB15) represent a mix of techniques that don't fall into one specific category, often testing multiple attack primitives against a target. Typical signatures: varied protocol/flag usage inconsistent with normal application traffic.",
+        "similarity": 0.144
+      }
+    ],
+    "explanation_text": "This traffic was flagged as a potential ATTACK with 60.1% model confidence. The strongest signal was\ntotal_fwd_packets, along with 4 other feature(s) deviating from typical benign traffic patterns.\nThis pattern is consistent with known DoS-style traffic characteristics. Recommended action: review\nthe source of this flow and consider temporary monitoring or rate-limiting if the pattern repeats.",
+    "llm_provider_used": "Local Template (OFFLINE FALLBACK - not a real LLM)",
+    "sample_index": 11
+  },
+  {
+    "prediction": "Attack",
+    "confidence": 0.605,
+    "contributing_features": [
+      {
+        "feature": "total_backward_packets",
+        "value": 1.359,
+        "typical_benign_value": 0.004,
+        "deviation_std": 1.36,
+        "direction": "above normal"
+      },
+      {
+        "feature": "protocol",
+        "value": 1.324,
+        "typical_benign_value": 0.002,
+        "deviation_std": 1.32,
+        "direction": "above normal"
+      },
+      {
+        "feature": "flow_duration",
+        "value": -0.694,
+        "typical_benign_value": 0.003,
+        "deviation_std": -0.7,
+        "direction": "below normal"
+      },
+      {
+        "feature": "total_fwd_packets",
+        "value": -0.622,
+        "typical_benign_value": 0.015,
+        "deviation_std": -0.64,
+        "direction": "below normal"
+      },
+      {
+        "feature": "fwd_packet_length_min",
+        "value": -0.609,
+        "typical_benign_value": 0.013,
+        "deviation_std": -0.61,
+        "direction": "below normal"
+      }
+    ],
+    "retrieved_knowledge": [
+      {
+        "attack_type": "DoS",
+        "text": "Denial of Service (single-source) attacks aim to exhaust a target's resources from one attacking host, rather than the many-source pattern of DDoS. Typical signatures: sustained high-rate traffic from a single source IP, often repetitive request patterns.",
+        "similarity": 0.246
+      },
+      {
+        "attack_type": "Generic",
+        "text": "Generic attacks (as labeled in UNSW-NB15) represent a mix of techniques that don't fall into one specific category, often testing multiple attack primitives against a target. Typical signatures: varied protocol/flag usage inconsistent with normal application traffic.",
+        "similarity": 0.144
+      }
+    ],
+    "explanation_text": "This traffic was flagged as a potential ATTACK with 60.5% model confidence. The strongest signal was\ntotal_backward_packets, along with 4 other feature(s) deviating from typical benign traffic\npatterns. This pattern is consistent with known DoS-style traffic characteristics. Recommended\naction: review the source of this flow and consider temporary monitoring or rate-limiting if the\npattern repeats.",
+    "llm_provider_used": "Local Template (OFFLINE FALLBACK - not a real LLM)",
+    "sample_index": 16
+  },
+  {
+    "prediction": "Normal",
+    "confidence": 0.5248,
+    "contributing_features": [
+      {
+        "feature": "total_fwd_packets",
+        "value": -0.938,
+        "typical_benign_value": 0.015,
+        "deviation_std": -0.96,
+        "direction": "below normal"
+      },
+      {
+        "feature": "protocol",
+        "value": 1.324,
+        "typical_benign_value": 0.002,
+        "deviation_std": 1.32,
+        "direction": "above normal"
+      },
+      {
+        "feature": "fwd_packet_length_max",
+        "value": -0.75,
+        "typical_benign_value": -0.0,
+        "deviation_std": -0.75,
+        "direction": "below normal"
+      },
+      {
+        "feature": "total_length_of_fwd_packets",
+        "value": -0.485,
+        "typical_benign_value": 0.014,
+        "deviation_std": -0.49,
+        "direction": "below normal"
+      },
+      {
+        "feature": "fwd_packet_length_min",
+        "value": 0.478,
+        "typical_benign_value": 0.013,
+        "deviation_std": 0.46,
+        "direction": "above normal"
+      }
+    ],
+    "retrieved_knowledge": [
+      {
+        "attack_type": "Normal",
+        "text": "Benign traffic reflects typical application usage: web browsing, file transfer, DNS lookups, email, and other legitimate services. Flow characteristics vary widely but generally show expected protocol behavior, reasonable packet/byte ratios, and duration consistent with normal application sessions.",
+        "similarity": 0.286
+      },
+      {
+        "attack_type": "Generic",
+        "text": "Generic attacks (as labeled in UNSW-NB15) represent a mix of techniques that don't fall into one specific category, often testing multiple attack primitives against a target. Typical signatures: varied protocol/flag usage inconsistent with normal application traffic.",
+        "similarity": 0.191
+      }
+    ],
+    "explanation_text": "This traffic was classified as NORMAL with 52.5% model confidence. Feature values were broadly\nconsistent with typical benign traffic, though total_fwd_packets showed some deviation worth noting\nif this pattern becomes frequent. Recommended action: no immediate action needed; continue routine\nmonitoring.",
+    "llm_provider_used": "Local Template (OFFLINE FALLBACK - not a real LLM)",
+    "sample_index": 0
+  },
+  {
+    "prediction": "Normal",
+    "confidence": 0.708,
+    "contributing_features": [
+      {
+        "feature": "fwd_packet_length_mean",
+        "value": 0.975,
+        "typical_benign_value": -0.007,
+        "deviation_std": 0.98,
+        "direction": "above normal"
+      },
+      {
+        "feature": "total_fwd_packets",
+        "value": 0.958,
+        "typical_benign_value": 0.015,
+        "deviation_std": 0.95,
+        "direction": "above normal"
+      },
+      {
+        "feature": "fwd_packet_length_std",
+        "value": -0.905,
+        "typical_benign_value": -0.015,
+        "deviation_std": -0.91,
+        "direction": "below normal"
+      },
+      {
+        "feature": "flow_duration",
+        "value": -0.92,
+        "typical_benign_value": 0.003,
+        "deviation_std": -0.93,
+        "direction": "below normal"
+      },
+      {
+        "feature": "fwd_packet_length_min",
+        "value": -0.947,
+        "typical_benign_value": 0.013,
+        "deviation_std": -0.94,
+        "direction": "below normal"
+      }
+    ],
+    "retrieved_knowledge": [
+      {
+        "attack_type": "Normal",
+        "text": "Benign traffic reflects typical application usage: web browsing, file transfer, DNS lookups, email, and other legitimate services. Flow characteristics vary widely but generally show expected protocol behavior, reasonable packet/byte ratios, and duration consistent with normal application sessions.",
+        "similarity": 0.257
+      },
+      {
+        "attack_type": "Generic",
+        "text": "Generic attacks (as labeled in UNSW-NB15) represent a mix of techniques that don't fall into one specific category, often testing multiple attack primitives against a target. Typical signatures: varied protocol/flag usage inconsistent with normal application traffic.",
+        "similarity": 0.142
+      }
+    ],
+    "explanation_text": "This traffic was classified as NORMAL with 70.8% model confidence. Feature values were broadly\nconsistent with typical benign traffic, though fwd_packet_length_mean showed some deviation worth\nnoting if this pattern becomes frequent. Recommended action: no immediate action needed; continue\nroutine monitoring.",
+    "llm_provider_used": "Local Template (OFFLINE FALLBACK - not a real LLM)",
+    "sample_index": 1
+  }
+]

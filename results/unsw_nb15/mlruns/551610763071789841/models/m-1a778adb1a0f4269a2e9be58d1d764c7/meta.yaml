@@ -1,0 +1,10 @@
+artifact_location: file:E:\nids\results\unsw_nb15/mlruns/551610763071789841/models/m-1a778adb1a0f4269a2e9be58d1d764c7/artifacts
+creation_timestamp: 1788101448465
+experiment_id: '551610763071789841'
+last_updated_timestamp: 1788101449406
+model_id: m-1a778adb1a0f4269a2e9be58d1d764c7
+model_type: null
+name: idrandom_forest
+source_run_id: 20036c17f7f641aaa32b824294d37e23
+status: 3
+status_message: null

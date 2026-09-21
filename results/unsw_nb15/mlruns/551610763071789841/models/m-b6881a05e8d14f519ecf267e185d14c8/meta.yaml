@@ -1,0 +1,10 @@
+artifact_location: file:E:\nids\results\unsw_nb15/mlruns/551610763071789841/models/m-b6881a05e8d14f519ecf267e185d14c8/artifacts
+creation_timestamp: 1788194361747
+experiment_id: '551610763071789841'
+last_updated_timestamp: 1788194372769
+model_id: m-b6881a05e8d14f519ecf267e185d14c8
+model_type: null
+name: lightgbm
+source_run_id: e8e248428ab0460bb36b4894eb8616a3
+status: 3
+status_message: null

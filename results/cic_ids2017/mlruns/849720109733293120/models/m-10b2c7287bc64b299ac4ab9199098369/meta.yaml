@@ -1,0 +1,10 @@
+artifact_location: file:E:\nids\results\cic_ids2017/mlruns/849720109733293120/models/m-10b2c7287bc64b299ac4ab9199098369/artifacts
+creation_timestamp: 1788102523610
+experiment_id: '849720109733293120'
+last_updated_timestamp: 1788102526704
+model_id: m-10b2c7287bc64b299ac4ab9199098369
+model_type: null
+name: idrandom_forest
+source_run_id: d824f6da50b2457eb1c006513053bf12
+status: 3
+status_message: null

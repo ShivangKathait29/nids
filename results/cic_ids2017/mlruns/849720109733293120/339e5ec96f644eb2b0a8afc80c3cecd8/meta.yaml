@@ -1,0 +1,14 @@
+artifact_uri: file:E:\nids\results\cic_ids2017/mlruns/849720109733293120/339e5ec96f644eb2b0a8afc80c3cecd8/artifacts
+end_time: 1788194271282
+entry_point_name: ''
+experiment_id: '849720109733293120'
+lifecycle_stage: active
+run_id: 339e5ec96f644eb2b0a8afc80c3cecd8
+run_name: baseline_rf_cic_ids2017
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1788194232753
+status: 3
+tags: []
+user_id: Hp

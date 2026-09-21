@@ -1,0 +1,42 @@
+======================================================================
+STAGE 4 PIPELINE — source: cic_ids2017, target: unsw_nb15
+======================================================================
+
+>>> [1/5] Loading and aligning both datasets to common feature space: ['duration', 'fwd_packets', 'bwd_packets', 'fwd_bytes', 'bwd_bytes', 'byte_rate', 'packet_rate', 'fwd_iat_mean', 'total_bytes']
+Source (cic_ids2017): (5000, 9), class balance: {0: 3995, 1: 1005}
+Target (unsw_nb15): (5000, 9), class balance: {0: 4194, 1: 806}
+
+>>> [2/5] Target split: fine-tune sample = 500 rows (10%), test set = 4500 rows (untouched)
+
+>>> [3/5] Training source model (random_forest) on cic_ids2017
+  Source model trained in 0.26s
+
+>>> [4/5] Training target-only-small baseline (no source knowledge, 10% target data only)
+
+>>> [5/5] Fine-tuning source model on the same 10% target sample
+
+======================================================================
+RESULTS on unsw_nb15 test set (untouched, 4500 samples)
+======================================================================
+                                   approach  accuracy  precision   recall  f1_score  roc_auc
+                    Source-only (zero-shot)  0.836000   0.217391 0.006897  0.013369 0.490968
+    Target-only (small sample, no transfer)  0.834000   0.156250 0.006897  0.013210 0.497380
+Transfer Learning (pretrained + fine-tuned)  0.838222   0.000000 0.000000  0.000000 0.497187
+
+======================================================================
+HEADLINE RESULT — Transfer Learning Value
+======================================================================
+Domain gap (source zero-shot on target): 0.8360 accuracy
+Target-only, small sample only:          0.8340 accuracy
+Transfer (pretrained + fine-tuned):       0.8382 accuracy
+Transfer vs zero-shot improvement: +0.0022
+Transfer vs target-only improvement: +0.0042 (transfer learning helps)
+
+>>> Running data-efficiency sweep (varying fine-tune sample size)
+  fraction=0.02 (n=100): target_only_acc=0.8272, transfer_acc=0.8360
+  fraction=0.05 (n=250): target_only_acc=0.8372, transfer_acc=0.8376
+  fraction=0.10 (n=500): target_only_acc=0.8352, transfer_acc=0.8368
+  fraction=0.20 (n=1000): target_only_acc=0.8324, transfer_acc=0.8376
+  fraction=0.40 (n=2000): target_only_acc=0.8372, transfer_acc=0.8364
+
+Saved comparison_chart.png and data_efficiency_curve.png to ../results/cic_ids2017_to_unsw_nb15

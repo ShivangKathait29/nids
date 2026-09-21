@@ -1,0 +1,10 @@
+artifact_location: file:E:\nids\results\cic_ids2017/mlruns/849720109733293120/models/m-0c0e7516d4944c73a51fbec3187ef4a4/artifacts
+creation_timestamp: 1788194289926
+experiment_id: '849720109733293120'
+last_updated_timestamp: 1788194290444
+model_id: m-0c0e7516d4944c73a51fbec3187ef4a4
+model_type: null
+name: xgboost
+source_run_id: 6d560fc37dda453b837f725b3a12b3ba
+status: 3
+status_message: null

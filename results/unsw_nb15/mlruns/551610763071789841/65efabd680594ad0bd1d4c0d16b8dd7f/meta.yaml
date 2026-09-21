@@ -1,0 +1,14 @@
+artifact_uri: file:E:\nids\results\unsw_nb15/mlruns/551610763071789841/65efabd680594ad0bd1d4c0d16b8dd7f/artifacts
+end_time: 1788194332485
+entry_point_name: ''
+experiment_id: '551610763071789841'
+lifecycle_stage: active
+run_id: 65efabd680594ad0bd1d4c0d16b8dd7f
+run_name: baseline_rf_unsw_nb15
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1788194315640
+status: 3
+tags: []
+user_id: Hp

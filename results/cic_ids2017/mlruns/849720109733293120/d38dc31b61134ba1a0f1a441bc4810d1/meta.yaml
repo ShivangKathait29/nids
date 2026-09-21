@@ -1,0 +1,14 @@
+artifact_uri: file:E:\nids\results\cic_ids2017/mlruns/849720109733293120/d38dc31b61134ba1a0f1a441bc4810d1/artifacts
+end_time: 1788102530329
+entry_point_name: ''
+experiment_id: '849720109733293120'
+lifecycle_stage: active
+run_id: d38dc31b61134ba1a0f1a441bc4810d1
+run_name: xgboost_cic_ids2017
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1788102527210
+status: 3
+tags: []
+user_id: Rishika Snehi

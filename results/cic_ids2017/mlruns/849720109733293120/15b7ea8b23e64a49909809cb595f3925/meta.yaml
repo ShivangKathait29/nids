@@ -1,0 +1,14 @@
+artifact_uri: file:E:\nids\results\cic_ids2017/mlruns/849720109733293120/15b7ea8b23e64a49909809cb595f3925/artifacts
+end_time: 1788102533694
+entry_point_name: ''
+experiment_id: '849720109733293120'
+lifecycle_stage: active
+run_id: 15b7ea8b23e64a49909809cb595f3925
+run_name: lightgbm_cic_ids2017
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1788102530674
+status: 3
+tags: []
+user_id: Rishika Snehi

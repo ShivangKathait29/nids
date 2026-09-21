@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIDS · Chat with your Network</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E1620;
+    --surface: #16212C;
+    --surface-raised: #1C2A38;
+    --border: #263646;
+    --text-primary: #E6EDF3;
+    --text-secondary: #7E93A7;
+    --text-tertiary: #536575;
+    --accent-clear: #45C9BA;
+    --accent-clear-dim: rgba(69, 201, 186, 0.15);
+    --accent-alert: #E8734A;
+    --accent-alert-dim: rgba(232, 115, 74, 0.15);
+    --accent-alert-strong: #E0543A;
+    --font-ui: 'Inter', -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .brand-mark {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent-clear);
+    letter-spacing: 0.08em;
+  }
+  .brand-title {
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+  }
+  .brand-sub {
+    color: var(--text-tertiary);
+    font-size: 13px;
+  }
+
+  .meta-tags {
+    display: flex;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .tag {
+    padding: 4px 9px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    background: var(--surface-raised);
+  }
+
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* --- Alert list column --- */
+  .alert-list {
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 16px 12px;
+  }
+  .alert-list-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    padding: 0 8px 10px;
+  }
+  .alert-card {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface-raised);
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .alert-card:hover { border-color: var(--text-tertiary); }
+  .alert-card.active {
+    border-color: var(--accent-clear);
+    background: var(--accent-clear-dim);
+  }
+  .alert-card.active.is-attack {
+    border-color: var(--accent-alert);
+    background: var(--accent-alert-dim);
+  }
+  .alert-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  .alert-id {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+  .verdict-pill {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+  }
+  .verdict-pill.attack {
+    background: var(--accent-alert-dim);
+    color: var(--accent-alert);
+  }
+  .verdict-pill.normal {
+    background: var(--accent-clear-dim);
+    color: var(--accent-clear);
+  }
+  .alert-confidence {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  /* --- Detail panel --- */
+  .detail-panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+  }
+  .detail-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px 32px;
+  }
+  .detail-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .detail-header h2 {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 600;
+  }
+  .detail-header .verdict-pill { font-size: 12px; padding: 4px 10px; }
+  .detail-sub {
+    color: var(--text-tertiary);
+    font-size: 13px;
+    font-family: var(--font-mono);
+    margin-bottom: 24px;
+  }
+
+  .explanation-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent-clear);
+    border-radius: 6px;
+    padding: 16px 18px;
+    line-height: 1.6;
+    font-size: 14.5px;
+    color: var(--text-primary);
+    margin-bottom: 28px;
+  }
+  .explanation-box.is-attack { border-left-color: var(--accent-alert); }
+  .explanation-provider {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 10px;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .feature-row {
+    display: grid;
+    grid-template-columns: 180px 1fr 90px;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .feature-name {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text-secondary);
+  }
+  .feature-bar-track {
+    height: 6px;
+    background: var(--surface-raised);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+  .feature-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .feature-bar-fill.above { background: var(--accent-alert); }
+  .feature-bar-fill.below { background: var(--accent-clear); }
+  .feature-std {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text-tertiary);
+    text-align: right;
+  }
+
+  .knowledge-box {
+    margin-top: 28px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .knowledge-tag {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--accent-clear);
+    margin-right: 6px;
+  }
+
+  /* --- Chat dock --- */
+  .chat-dock {
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+    max-height: 40vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .chat-log {
+    padding: 12px 32px;
+    overflow-y: auto;
+    font-size: 13.5px;
+    max-height: 22vh;
+  }
+  .chat-msg { margin-bottom: 10px; line-height: 1.5; }
+  .chat-msg .who {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .chat-msg.user .who { color: var(--accent-clear); }
+  .chat-msg.assistant .who { color: var(--accent-alert); }
+
+  .chat-input-row {
+    display: flex;
+    gap: 10px;
+    padding: 14px 32px;
+    border-top: 1px solid var(--border);
+  }
+  .chat-input-row input {
+    flex: 1;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 14px;
+    outline: none;
+  }
+  .chat-input-row input:focus { border-color: var(--accent-clear); }
+  .chat-input-row button {
+    background: var(--accent-clear);
+    color: var(--bg);
+    border: none;
+    border-radius: 6px;
+    padding: 0 20px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: var(--font-ui);
+  }
+  .chat-input-row button:disabled { opacity: 0.5; cursor: default; }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+
+  /* --- Suggested questions --- */
+  .suggested-questions {
+    padding: 10px 32px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .suggested-label {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    margin-bottom: 2px;
+  }
+  .q-chip {
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 13px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    white-space: nowrap;
+    font-family: var(--font-ui);
+  }
+  .q-chip:hover {
+    border-color: var(--accent-clear);
+    color: var(--accent-clear);
+    background: var(--accent-clear-dim);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="brand-mark">▲▼</span>
+    <span class="brand-title">Chat with your Network</span>
+    <span class="brand-sub">— NIDS Explainability Console</span>
+  </div>
+  <div class="meta-tags">
+    <span class="tag">dataset: {{ dataset_name }}</span>
+    <span class="tag">llm: {{ llm_provider_name }}</span>
+  </div>
+</header>
+
+<main>
+  <div class="alert-list" id="alertList">
+    <div class="alert-list-label">FLAGGED TRAFFIC · {{ alerts|length }} ALERTS</div>
+    {% for alert in alerts %}
+    <div class="alert-card {% if alert.prediction == 'Attack' %}is-attack{% endif %}"
+         data-id="{{ alert.alert_id }}"
+         onclick="selectAlert({{ alert.alert_id }})">
+      <div class="alert-card-top">
+        <span class="alert-id">ALERT #{{ alert.alert_id }}</span>
+        <span class="verdict-pill {% if alert.prediction == 'Attack' %}attack{% else %}normal{% endif %}">
+          {{ alert.prediction|upper }}
+        </span>
+      </div>
+      <div class="alert-confidence">confidence {{ "%.1f"|format(alert.confidence * 100) }}%</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="detail-panel">
+    <div class="detail-scroll" id="detailScroll">
+      <!-- populated by JS on load / selection -->
+    </div>
+
+    <div class="chat-dock">
+      <div class="chat-log" id="chatLog">
+        <div class="chat-msg assistant">
+          <span class="who">ASSISTANT</span>
+          Ask me anything about the current alerts — click a suggested question below or type your own.
+        </div>
+      </div>
+
+      <div class="suggested-questions" id="suggestedQuestions">
+        <div class="suggested-label">SUGGESTED QUESTIONS</div>
+        <span class="q-chip" onclick="askQuestion('Why was this alert flagged by the model?')">Why was this alert flagged?</span>
+        <span class="q-chip" onclick="askQuestion('What are the signs of a DDoS attack in these alerts?')">What is a DDoS attack?</span>
+        <span class="q-chip" onclick="askQuestion('Is there any port scan or reconnaissance activity detected?')">Port scan detected?</span>
+        <span class="q-chip" onclick="askQuestion('Are there any brute force or SSH login attacks in the alerts?')">Brute force attack?</span>
+        <span class="q-chip" onclick="askQuestion('What does the confidence score mean for these alerts?')">What is confidence score?</span>
+        <span class="q-chip" onclick="askQuestion('Which features contributed most to this detection?')">Top contributing features?</span>
+        <span class="q-chip" onclick="askQuestion('Could any of these alerts be false positives or false alarms?')">Any false positives?</span>
+        <span class="q-chip" onclick="askQuestion('What action should I take to respond to these alerts?')">Recommended action?</span>
+        <span class="q-chip" onclick="askQuestion('What dataset was used to train this model?')">Dataset used?</span>
+        <span class="q-chip" onclick="askQuestion('How does the Random Forest classifier algorithm work?')">How does the model work?</span>
+      </div>
+
+      <div class="chat-input-row">
+        <input type="text" id="chatInput" placeholder="Ask about these alerts or click a question above…" onkeydown="if(event.key==='Enter') sendChat()">
+        <button id="chatSend" onclick="sendChat()">Send</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const ALERTS = {{ alerts|tojson }};
+  let currentAlertId = ALERTS.length ? ALERTS[0].alert_id : null;
+
+  function stdBarWidth(std) {
+    const capped = Math.min(Math.abs(std), 3);
+    return Math.max(6, (capped / 3) * 100);
+  }
+
+  function renderDetail(alertId) {
+    const alert = ALERTS.find(a => a.alert_id === alertId);
+    if (!alert) return;
+    currentAlertId = alertId;
+
+    document.querySelectorAll('.alert-card').forEach(el => {
+      el.classList.toggle('active', parseInt(el.dataset.id) === alertId);
+    });
+
+    const isAttack = alert.prediction === 'Attack';
+    let featureRows = alert.contributing_features.map(f => `
+      <div class="feature-row">
+        <div class="feature-name">${f.feature}</div>
+        <div class="feature-bar-track">
+          <div class="feature-bar-fill ${f.direction.includes('above') ? 'above' : 'below'}"
+               style="width: ${stdBarWidth(f.deviation_std)}%"></div>
+        </div>
+        <div class="feature-std">${f.deviation_std > 0 ? '+' : ''}${f.deviation_std}σ</div>
+      </div>
+    `).join('');
+
+    let knowledgeHtml = '';
+    if (alert.retrieved_knowledge && alert.retrieved_knowledge.length) {
+      knowledgeHtml = `
+        <div class="section-label">REFERENCE KNOWLEDGE</div>
+        <div class="knowledge-box">
+          ${alert.retrieved_knowledge.map(k => `<div><span class="knowledge-tag">[${k.attack_type}]</span>${k.text}</div>`).join('<br>')}
+        </div>`;
+    }
+
+    document.getElementById('detailScroll').innerHTML = `
+      <div class="detail-header">
+        <h2>Alert #${alert.alert_id}</h2>
+        <span class="verdict-pill ${isAttack ? 'attack' : 'normal'}">${alert.prediction.toUpperCase()}</span>
+      </div>
+      <div class="detail-sub">test sample #${alert.sample_index} · confidence ${(alert.confidence*100).toFixed(1)}%</div>
+
+      <div class="explanation-box ${isAttack ? 'is-attack' : ''}">
+        ${alert.explanation_text}
+        <div class="explanation-provider">generated by: ${alert.llm_provider_used}</div>
+      </div>
+
+      <div class="section-label">CONTRIBUTING FEATURES (deviation from typical benign traffic)</div>
+      ${featureRows}
+      ${knowledgeHtml}
+    `;
+  }
+
+  function selectAlert(id) { renderDetail(id); }
+
+  function askQuestion(text) {
+    const input = document.getElementById('chatInput');
+    input.value = text;
+    sendChat();
+  }
+
+  async function sendChat() {
+    const input = document.getElementById('chatInput');
+    const question = input.value.trim();
+    if (!question) return;
+    input.value = '';
+    const log = document.getElementById('chatLog');
+
+    // hide suggested questions after first message to save space
+    document.getElementById('suggestedQuestions').style.display = 'none';
+
+    log.innerHTML += `<div class="chat-msg user"><span class="who">YOU</span>${question}</div>`;
+    log.scrollTop = log.scrollHeight;
+
+    const sendBtn = document.getElementById('chatSend');
+    sendBtn.disabled = true;
+    log.innerHTML += `<div class="chat-msg assistant" id="thinking"><span class="who">ASSISTANT</span><em style="color:var(--text-tertiary)">Thinking…</em></div>`;
+    log.scrollTop = log.scrollHeight;
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({question})
+      });
+      const data = await res.json();
+      document.getElementById('thinking').outerHTML =
+        `<div class="chat-msg assistant"><span class="who">ASSISTANT · ${data.llm_provider_used || ''}</span>${data.answer}</div>`;
+    } catch (e) {
+      document.getElementById('thinking').outerHTML =
+        `<div class="chat-msg assistant"><span class="who">ASSISTANT</span>Error reaching the server: ${e}</div>`;
+    }
+    log.scrollTop = log.scrollHeight;
+    sendBtn.disabled = false;
+  }
+
+  if (currentAlertId !== null) renderDetail(currentAlertId);
+</script>
+
+</body>
+</html>

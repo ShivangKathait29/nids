@@ -1,0 +1,3 @@
+pipeline,precision,recall,f1_score,accuracy,roc_auc,pr_auc,majority_class_baseline_accuracy,accuracy_above_majority_baseline,avg_latency_ms_per_sample,fraction_via_stage2
+"Single-Stage (IDRandomForest alone, tuned threshold=0.214)",0.21368547418967587,0.8855721393034826,0.344294003868472,0.322,0.5043493421503247,0.1906560258319391,0.799,-0.47700000000000004,0.02053757420000011,1.0
+"Two-Stage Hybrid (Linear Filter -> IDRandomForest, tuned threshold=0.214)",0.21523579201934703,0.8855721393034826,0.3463035019455253,0.328,0.5063916960877715,0.19105558990979177,0.799,-0.47100000000000003,0.022135820799996965,0.988

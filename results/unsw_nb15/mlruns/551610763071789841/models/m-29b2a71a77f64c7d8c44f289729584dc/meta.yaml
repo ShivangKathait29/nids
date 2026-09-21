@@ -1,0 +1,10 @@
+artifact_location: file:E:\nids\results\unsw_nb15/mlruns/551610763071789841/models/m-29b2a71a77f64c7d8c44f289729584dc/artifacts
+creation_timestamp: 1788017122817
+experiment_id: '551610763071789841'
+last_updated_timestamp: 1788017123272
+model_id: m-29b2a71a77f64c7d8c44f289729584dc
+model_type: null
+name: xgboost
+source_run_id: e24b77e7b1b946f5a4d89a2d5caa9d3d
+status: 3
+status_message: null

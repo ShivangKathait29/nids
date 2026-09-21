@@ -1,0 +1,9 @@
+artifact_location: file:E:\nids\results\cic_ids2017/mlruns/849720109733293120
+creation_time: 1788015461347
+effective_trace_archival_retention: null
+experiment_id: '849720109733293120'
+last_update_time: 1788015461347
+lifecycle_stage: active
+name: nids_cic_ids2017
+trace_location: null
+workspace: default

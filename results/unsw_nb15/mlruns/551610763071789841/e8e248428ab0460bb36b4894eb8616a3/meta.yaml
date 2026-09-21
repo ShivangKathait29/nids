@@ -1,0 +1,14 @@
+artifact_uri: file:E:\nids\results\unsw_nb15/mlruns/551610763071789841/e8e248428ab0460bb36b4894eb8616a3/artifacts
+end_time: 1788194372793
+entry_point_name: ''
+experiment_id: '551610763071789841'
+lifecycle_stage: active
+run_id: e8e248428ab0460bb36b4894eb8616a3
+run_name: lightgbm_unsw_nb15
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1788194357839
+status: 3
+tags: []
+user_id: Hp

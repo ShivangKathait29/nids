@@ -1,0 +1,14 @@
+artifact_uri: file:E:\nids\results\unsw_nb15/mlruns/551610763071789841/b06d3134ef2c427895899ef6c1a13184/artifacts
+end_time: 1788194355841
+entry_point_name: ''
+experiment_id: '551610763071789841'
+lifecycle_stage: active
+run_id: b06d3134ef2c427895899ef6c1a13184
+run_name: idrandom_forest_unsw_nb15
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1788194332492
+status: 3
+tags: []
+user_id: Hp
