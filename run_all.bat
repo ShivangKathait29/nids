@@ -62,3 +62,7 @@ cd ..\..
 echo.
 echo Pipeline execution complete.
 pause
+
+
+// PS C:\Users\Hp\Downloads\nids_zipped\nids> cd nids_stage5\src\dashboard
+PS C:\Users\Hp\Downloads\nids_zipped\nids\nids_stage5\src\dashboard> python app.py --dataset cic_ids2017 --stage1_dir "C:\Users\Hp\Downloads\nids_zipped\nids\data\processed\cic_ids2017"

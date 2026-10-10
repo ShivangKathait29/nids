@@ -77,12 +77,12 @@ class IDRandomForest:
     def fit(self, X, y):
         # --- Phase A: baseline (unpruned) RF ---
         baseline = RandomForestClassifier(
-            n_estimators=self.n_estimators, random_state=self.random_state, n_jobs=-1
+            n_estimators=self.n_estimators, random_state=self.random_state, n_jobs=None
         )
         baseline.fit(X, y)
         self.feature_importances_ = baseline.feature_importances_
         baseline_acc = cross_val_score(
-            baseline, X, y, cv=self.cv_folds, scoring="accuracy", n_jobs=-1
+            baseline, X, y, cv=self.cv_folds, scoring="accuracy", n_jobs=None
         ).mean()
 
         baseline_avg_nodes = np.mean([t.tree_.node_count for t in baseline.estimators_])
@@ -113,12 +113,12 @@ class IDRandomForest:
                 n_estimators=self.n_estimators,
                 random_state=self.random_state,
                 ccp_alpha=alpha,
-                n_jobs=-1,
+                n_jobs=None,
             )
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 acc = cross_val_score(
-                    candidate, X, y, cv=self.cv_folds, scoring="accuracy", n_jobs=-1
+                    candidate, X, y, cv=self.cv_folds, scoring="accuracy", n_jobs=None
                 ).mean()
 
             if acc >= baseline_acc - self.tolerance:
@@ -164,7 +164,7 @@ def get_xgboost_model(random_state: int = 42):
             learning_rate=0.1,
             eval_metric="logloss",
             random_state=random_state,
-            n_jobs=-1,
+            n_jobs=None,
         )
         return model, True, "Using real XGBoost"
     except ImportError:
@@ -187,7 +187,7 @@ def get_lightgbm_model(random_state: int = 42):
             max_depth=6,
             learning_rate=0.1,
             random_state=random_state,
-            n_jobs=-1,
+            n_jobs=None,
             verbosity=-1,
         )
         return model, True, "Using real LightGBM"
@@ -204,4 +204,4 @@ def get_lightgbm_model(random_state: int = 42):
 
 def get_baseline_random_forest(random_state: int = 42, n_estimators: int = 100):
     """Vanilla, unpruned Random Forest — the 'before' comparison for IDRandom-Forest."""
-    return RandomForestClassifier(n_estimators=n_estimators, random_state=random_state, n_jobs=-1)
+    return RandomForestClassifier(n_estimators=n_estimators, random_state=random_state, n_jobs=None)
