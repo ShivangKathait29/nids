@@ -1,0 +1,7 @@
+{
+  "dataset": "cic_ids2017",
+  "filter_kernel": "sgd_log_loss",
+  "stage1_threshold": 0.15,
+  "stage2_model_name": "IDRandomForest",
+  "stage2_threshold": 0.789
+}

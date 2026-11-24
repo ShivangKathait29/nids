@@ -1,0 +1,33 @@
+# Secrets / Environment variables
+.env
+*.env
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Large raw & processed datasets (>100MB GitHub limit)
+nids_stage1/data/raw/
+nids_stage1/data/processed/*/X_*.csv
+nids_stage1/data/processed/*/y_*.csv
+data/raw/
+data/processed/*/X_*.csv
+data/processed/*/y_*.csv
+
+# MLflow artifacts & large Stage 2 model binaries
+mlruns/
+**/mlruns/
+mlflow.db
+**/mlflow.db
+nids_stage2/results/*/models/*.pkl
+
+# Node / OS / Editor
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+

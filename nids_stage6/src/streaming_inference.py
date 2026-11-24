@@ -17,22 +17,33 @@ Loads three artifacts produced by Stage 1:
 """
 
 import json
+import os
 import pickle
+import sys
 import time
+import joblib
 import numpy as np
 import pandas as pd
 
+# Ensure Stage 2 and Stage 3 source paths are in sys.path so pickled models can unpickle
+_stage3_src = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "nids_stage3", "src"))
+_stage2_src = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "nids_stage2", "src"))
+if _stage3_src not in sys.path:
+    sys.path.append(_stage3_src)
+if _stage2_src not in sys.path:
+    sys.path.append(_stage2_src)
+
 
 class StreamingInferenceEngine:
-    def __init__(self, stage1_dir: str, model, explainer=None):
+    def __init__(self, stage1_dir: str, model=None, model_path: str = None, explainer=None):
         """
         Parameters
         ----------
         stage1_dir : path to Stage 1's processed output directory
                      (needs scaler.pkl, full_feature_names.json, selected_features.json)
-        model : any fitted classifier with .predict()/.predict_proba() —
-                Stage 3's TwoStagePipeline (recommended, gets the latency
-                benefit) or a plain Stage 2 model
+        model : optional fitted classifier with .predict()/.predict_proba() —
+                Stage 3's TwoStagePipeline or a plain Stage 2 model
+        model_path : optional path to a persisted model (.pkl) saved via joblib.dump
         explainer : optional Stage 5 XAIExplainer — if provided, flagged
                     (attack) traffic gets an automatic natural-language
                     explanation generated (decoupled — see note below)
@@ -44,7 +55,13 @@ class StreamingInferenceEngine:
         with open(f"{stage1_dir}/selected_features.json") as f:
             self.selected_features = json.load(f)
 
-        self.model = model
+        if model is not None:
+            self.model = model
+        elif model_path is not None:
+            self.model = joblib.load(model_path)
+        else:
+            raise ValueError("Must provide either a 'model' instance or a 'model_path' string.")
+
         self.explainer = explainer
 
         missing = set(self.selected_features) - set(self.full_feature_names)
@@ -54,15 +71,14 @@ class StreamingInferenceEngine:
                 f"Stage 1 artifacts may be from an inconsistent run."
             )
 
-    def _flow_dict_to_scaled_row(self, flow_features: dict) -> pd.DataFrame:
+    def _flow_dict_to_scaled_row(self, flow_features) -> pd.DataFrame:
         """
-        Builds a single-row DataFrame in the scaler's expected column
-        order, applies the scaler, then subsets to the selected features
-        the model was actually trained on.
+        Phase 1.4: Builds an aligned DataFrame with exact column order matching
+        full_feature_names.json, cleans inf/NaN to 0.0, applies the scaler,
+        then subsets to the selected features the model was trained on.
         """
-        raw_row = pd.DataFrame([{
-            col: flow_features.get(col, 0.0) for col in self.full_feature_names
-        }])
+        from flow_feature_extractor import align_features
+        raw_row = align_features(flow_features, self.full_feature_names)
         scaled = pd.DataFrame(
             self.scaler.transform(raw_row), columns=self.full_feature_names
         )

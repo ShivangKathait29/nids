@@ -41,9 +41,11 @@ Usage:
 """
 
 import argparse
+import json
 import os
 import sys
 import time
+import joblib
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -167,6 +169,24 @@ def run_stage3(
         stage2_model_name=model_label, stage2_threshold=stage2_threshold,
     )
 
+    # Persist the trained cascade and threshold metadata (for Stage 6 real-time inference)
+    models_dir = os.path.join(out_dir, "models")
+    os.makedirs(models_dir, exist_ok=True)
+    cascade_path = os.path.join(models_dir, "cascade.pkl")
+    joblib.dump(pipeline, cascade_path)
+    log(f"  Saved trained cascade model to {cascade_path}")
+
+    meta_path = os.path.join(models_dir, "cascade_metadata.json")
+    with open(meta_path, "w") as f:
+        json.dump({
+            "dataset": dataset_name,
+            "filter_kernel": filter_kernel,
+            "stage1_threshold": float(threshold),
+            "stage2_model_name": model_label,
+            "stage2_threshold": float(stage2_threshold) if stage2_threshold is not None else None,
+        }, f, indent=2)
+    log(f"  Saved cascade metadata to {meta_path}")
+
     # --- 4. Benchmark: two-stage cascade vs Stage 2 alone (single-stage baseline) ---
     log("\n>>> [4/4] Benchmarking two-stage cascade vs single-stage (Stage 2 alone) baseline")
 
@@ -270,7 +290,7 @@ def run_stage3(
     _plot_latency_comparison(comparison, out_dir)
     log(f"\nSaved threshold_search.png and latency_comparison.png to {out_dir}")
 
-    with open(f"{out_dir}/stage3_report.txt", "w") as f:
+    with open(f"{out_dir}/stage3_report.txt", "w", encoding="utf-8", errors="replace") as f:
         f.write("\n".join(report_lines))
 
     log(f"\n>>> Stage 3 complete. All artifacts written to: {out_dir}")

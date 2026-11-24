@@ -68,10 +68,28 @@ def load_cic_ids2017(path: str) -> pd.DataFrame:
         files = sorted(glob.glob(os.path.join(path, "*.csv")))
         if not files:
             raise FileNotFoundError(f"No CSV files found in directory: {path}")
-        frames = [pd.read_csv(f, low_memory=False) for f in files]
+        frames = []
+        for f in files:
+            frame = pd.read_csv(f, low_memory=False)
+            f_cols = frame.select_dtypes(include=["float64"]).columns
+            if len(f_cols) > 0:
+                frame[f_cols] = frame[f_cols].astype(np.float32)
+            i_cols = frame.select_dtypes(include=["int64"]).columns
+            if len(i_cols) > 0:
+                frame[i_cols] = frame[i_cols].astype(np.int32)
+            frames.append(frame)
         df = pd.concat(frames, ignore_index=True)
+        del frames
+        import gc
+        gc.collect()
     else:
         df = pd.read_csv(path, low_memory=False)
+        f_cols = df.select_dtypes(include=["float64"]).columns
+        if len(f_cols) > 0:
+            df[f_cols] = df[f_cols].astype(np.float32)
+        i_cols = df.select_dtypes(include=["int64"]).columns
+        if len(i_cols) > 0:
+            df[i_cols] = df[i_cols].astype(np.int32)
 
     df = _clean_column_names(df)
 

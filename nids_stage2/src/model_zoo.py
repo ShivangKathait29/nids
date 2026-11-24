@@ -75,14 +75,26 @@ class IDRandomForest:
         self.pruning_log_ = []
 
     def fit(self, X, y):
+        from sklearn.model_selection import train_test_split
+
         # --- Phase A: baseline (unpruned) RF ---
         baseline = RandomForestClassifier(
-            n_estimators=self.n_estimators, random_state=self.random_state, n_jobs=None
+            n_estimators=self.n_estimators, random_state=self.random_state, n_jobs=-1
         )
         baseline.fit(X, y)
         self.feature_importances_ = baseline.feature_importances_
+
+        # Use a stratified sample for cross-validation pruning search to run in seconds
+        if len(X) > 50000:
+            X_sub, _, y_sub, _ = train_test_split(
+                X, y, train_size=50000, stratify=y, random_state=self.random_state
+            )
+        else:
+            X_sub, y_sub = X, y
+
         baseline_acc = cross_val_score(
-            baseline, X, y, cv=self.cv_folds, scoring="accuracy", n_jobs=None
+            RandomForestClassifier(n_estimators=self.n_estimators, random_state=self.random_state, n_jobs=-1),
+            X_sub, y_sub, cv=self.cv_folds, scoring="accuracy", n_jobs=-1
         ).mean()
 
         baseline_avg_nodes = np.mean([t.tree_.node_count for t in baseline.estimators_])
@@ -91,21 +103,18 @@ class IDRandomForest:
         )
 
         # --- Phase B: cost-complexity pruning search ---
-        # Use one representative tree's pruning path to pick candidate alphas
-        # (searching all 100 trees' full paths is expensive; one tree's path
-        # gives a good range of candidate alpha magnitudes)
         sample_tree = RandomForestClassifier(
             n_estimators=1, random_state=self.random_state
-        ).fit(X, y).estimators_[0]
-        path = sample_tree.cost_complexity_pruning_path(X, y)
-        ccp_alphas = path.ccp_alphas
-        # de-duplicate and take an evenly spaced subset for a manageable search
-        ccp_alphas = np.unique(ccp_alphas)
+        ).fit(X_sub, y_sub).estimators_[0]
+        path = sample_tree.cost_complexity_pruning_path(X_sub, y_sub)
+        ccp_alphas = np.unique(path.ccp_alphas)
         if len(ccp_alphas) > self.n_alpha_candidates:
             idx = np.linspace(0, len(ccp_alphas) - 1, self.n_alpha_candidates).astype(int)
             ccp_alphas = ccp_alphas[idx]
 
-        best_alpha, best_model, best_nodes = 0.0, baseline, baseline_avg_nodes
+        best_alpha = 0.0
+        best_nodes = baseline_avg_nodes
+
         for alpha in ccp_alphas:
             if alpha == 0:
                 continue
@@ -113,30 +122,39 @@ class IDRandomForest:
                 n_estimators=self.n_estimators,
                 random_state=self.random_state,
                 ccp_alpha=alpha,
-                n_jobs=None,
+                n_jobs=-1,
             )
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 acc = cross_val_score(
-                    candidate, X, y, cv=self.cv_folds, scoring="accuracy", n_jobs=None
+                    candidate, X_sub, y_sub, cv=self.cv_folds, scoring="accuracy", n_jobs=-1
                 ).mean()
 
             if acc >= baseline_acc - self.tolerance:
-                candidate.fit(X, y)
+                candidate.fit(X_sub, y_sub)
                 avg_nodes = np.mean([t.tree_.node_count for t in candidate.estimators_])
                 self.pruning_log_.append(
                     f"ccp_alpha={alpha:.6f}: cv_accuracy={acc:.4f}, avg_nodes_per_tree={avg_nodes:.1f} "
                     f"({'ACCEPTED' if avg_nodes < best_nodes else 'rejected (not smaller)'})"
                 )
                 if avg_nodes < best_nodes:
-                    best_alpha, best_model, best_nodes = alpha, candidate, avg_nodes
+                    best_alpha, best_nodes = alpha, avg_nodes
             else:
                 self.pruning_log_.append(
                     f"ccp_alpha={alpha:.6f}: cv_accuracy={acc:.4f} — rejected (below tolerance)"
                 )
 
         self.best_ccp_alpha_ = best_alpha
-        self.model_ = best_model if best_model is not baseline else baseline.fit(X, y)
+        if best_alpha > 0:
+            self.model_ = RandomForestClassifier(
+                n_estimators=self.n_estimators,
+                random_state=self.random_state,
+                ccp_alpha=best_alpha,
+                n_jobs=-1,
+            ).fit(X, y)
+        else:
+            self.model_ = baseline
+
         reduction_pct = 100 * (1 - best_nodes / baseline_avg_nodes)
         self.pruning_log_.append(
             f"SELECTED ccp_alpha={best_alpha:.6f} -> avg_nodes_per_tree={best_nodes:.1f} "
@@ -164,7 +182,7 @@ def get_xgboost_model(random_state: int = 42):
             learning_rate=0.1,
             eval_metric="logloss",
             random_state=random_state,
-            n_jobs=None,
+            n_jobs=-1,
         )
         return model, True, "Using real XGBoost"
     except ImportError:
@@ -187,7 +205,7 @@ def get_lightgbm_model(random_state: int = 42):
             max_depth=6,
             learning_rate=0.1,
             random_state=random_state,
-            n_jobs=None,
+            n_jobs=-1,
             verbosity=-1,
         )
         return model, True, "Using real LightGBM"
@@ -204,4 +222,4 @@ def get_lightgbm_model(random_state: int = 42):
 
 def get_baseline_random_forest(random_state: int = 42, n_estimators: int = 100):
     """Vanilla, unpruned Random Forest — the 'before' comparison for IDRandom-Forest."""
-    return RandomForestClassifier(n_estimators=n_estimators, random_state=random_state, n_jobs=None)
+    return RandomForestClassifier(n_estimators=n_estimators, random_state=random_state, n_jobs=-1)

@@ -144,7 +144,7 @@ class TsharkCapture:
 
         return "bwd"
 
-    def capture(self) -> Iterator[PacketEvent]:
+    def capture(self, duration_seconds: float = None) -> Iterator[PacketEvent]:
         try:
             import pyshark
         except ImportError:
@@ -174,8 +174,11 @@ class TsharkCapture:
                 f"Original error: {e}"
             ) from e
 
+        start_time = time.time()
         try:
             for pkt in capture.sniff_continuously():
+                if duration_seconds is not None and (time.time() - start_time) >= duration_seconds:
+                    break
                 try:
                     # -------------------------------------------------
                     # IP / IPv6

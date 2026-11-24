@@ -40,6 +40,40 @@ import os
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
+import numpy as np
+import pandas as pd
+
+
+def align_features(flow_features, full_feature_names: list) -> pd.DataFrame:
+    """
+    Phase 1.4: Align raw live flow features to the exact Stage 1 training schema.
+
+    Rules applied:
+    1. Exact columns and ordering matching full_feature_names.json.
+    2. Missing columns -> filled with 0.0.
+    3. Extra columns -> dropped.
+    4. Replace inf/-inf/NaN with 0.0 before scaling.
+
+    Parameters
+    ----------
+    flow_features : dict (from FlowAggregator) or pd.DataFrame (from CICFlowMeter CSV)
+    full_feature_names : list of feature names from full_feature_names.json
+
+    Returns
+    -------
+    pd.DataFrame with shape (N, len(full_feature_names))
+    """
+    if isinstance(flow_features, dict):
+        row_dict = {col: flow_features.get(col, 0.0) for col in full_feature_names}
+        flow_df = pd.DataFrame([row_dict], columns=full_feature_names)
+    elif isinstance(flow_features, pd.DataFrame):
+        flow_df = flow_features.reindex(columns=full_feature_names, fill_value=0.0)
+    else:
+        flow_df = pd.DataFrame(flow_features).reindex(columns=full_feature_names, fill_value=0.0)
+
+    # Clean inf and NaN (matching Stage 1 cleaning)
+    flow_df = flow_df.replace([np.inf, -np.inf], np.nan).fillna(0.0)
+    return flow_df.astype(float)
 
 
 # ---------------------------------------------------------------------------
@@ -94,6 +128,9 @@ class _FlowState:
     bwd_timestamps: list = field(default_factory=list)
     protocol: int = 6
     dst_port: int = 0
+    src_ip: str = "0.0.0.0"
+    dst_ip: str = "0.0.0.0"
+    src_port: int = 0
 
 
 class FlowAggregator:
@@ -125,6 +162,7 @@ class FlowAggregator:
             self._flows[key] = _FlowState(
                 start_time=pkt.timestamp, last_time=pkt.timestamp,
                 protocol=pkt.protocol, dst_port=key[3],
+                src_ip=key[0], dst_ip=key[1], src_port=key[2],
             )
         flow = self._flows[key]
         flow.last_time = pkt.timestamp
@@ -205,6 +243,10 @@ class FlowAggregator:
             ) if len(flow.bwd_timestamps) > 1 else 0.0,
             "protocol": flow.protocol,
             "destination_port": flow.dst_port,
+            # Metadata only (not model features; dropped by align_features)
+            "_src_ip": flow.src_ip,
+            "_dst_ip": flow.dst_ip,
+            "_src_port": flow.src_port,
             "fwd_psh_flags": 0,  # not tracked by the simplified packet model — constant, matches
                                   # Stage 1's zero-variance-column handling (gets dropped automatically)
         }

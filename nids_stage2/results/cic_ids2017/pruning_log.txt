@@ -1,9 +1,9 @@
-Baseline RF: cv_accuracy=0.8497, avg_nodes_per_tree=1463.3
-ccp_alpha=0.000205: cv_accuracy=0.8491, avg_nodes_per_tree=1201.6 (ACCEPTED)
-ccp_alpha=0.000305: cv_accuracy=0.8410 — rejected (below tolerance)
-ccp_alpha=0.000361: cv_accuracy=0.8398 — rejected (below tolerance)
-ccp_alpha=0.000440: cv_accuracy=0.8373 — rejected (below tolerance)
-ccp_alpha=0.000547: cv_accuracy=0.8227 — rejected (below tolerance)
-ccp_alpha=0.000774: cv_accuracy=0.8092 — rejected (below tolerance)
-ccp_alpha=0.007741: cv_accuracy=0.6255 — rejected (below tolerance)
-SELECTED ccp_alpha=0.000205 -> avg_nodes_per_tree=1201.6 (17.9% smaller trees than baseline, within 0.5% accuracy tolerance)
+Baseline RF: cv_accuracy=0.9964, avg_nodes_per_tree=4208.9
+ccp_alpha=0.000018: cv_accuracy=0.9963, avg_nodes_per_tree=522.8 (ACCEPTED)
+ccp_alpha=0.000024: cv_accuracy=0.9964, avg_nodes_per_tree=455.8 (ACCEPTED)
+ccp_alpha=0.000039: cv_accuracy=0.9960, avg_nodes_per_tree=364.8 (ACCEPTED)
+ccp_alpha=0.000058: cv_accuracy=0.9955, avg_nodes_per_tree=287.3 (ACCEPTED)
+ccp_alpha=0.000128: cv_accuracy=0.9939, avg_nodes_per_tree=171.2 (ACCEPTED)
+ccp_alpha=0.000447: cv_accuracy=0.9901 — rejected (below tolerance)
+ccp_alpha=0.186680: cv_accuracy=0.7760 — rejected (below tolerance)
+SELECTED ccp_alpha=0.000128 -> avg_nodes_per_tree=171.2 (95.9% smaller trees than baseline, within 0.5% accuracy tolerance)

@@ -56,6 +56,10 @@ def run_stage1(dataset_name: str, raw_path: str, top_k_features: int = 20, out_d
     # --- 2. Clean + split ---
     log("\n>>> Step 2: Cleaning, encoding, splitting")
     result = clean_and_split(df)
+    del df
+    import gc
+    gc.collect()
+
     for line in result.log:
         log("  " + line)
 
@@ -98,25 +102,29 @@ def run_stage1(dataset_name: str, raw_path: str, top_k_features: int = 20, out_d
     out_dir = out_dir or f"../data/processed/{dataset_name}"
     os.makedirs(out_dir, exist_ok=True)
 
-    result.X_train.to_csv(f"{out_dir}/X_train.csv", index=False)
-    result.X_val.to_csv(f"{out_dir}/X_val.csv", index=False)
-    result.X_test.to_csv(f"{out_dir}/X_test.csv", index=False)
-    result.y_train_bin.to_csv(f"{out_dir}/y_train_bin.csv", index=False)
-    result.y_val_bin.to_csv(f"{out_dir}/y_val_bin.csv", index=False)
-    result.y_test_bin.to_csv(f"{out_dir}/y_test_bin.csv", index=False)
-    result.y_train_multi.to_csv(f"{out_dir}/y_train_multi.csv", index=False)
-    result.y_val_multi.to_csv(f"{out_dir}/y_val_multi.csv", index=False)
-    result.y_test_multi.to_csv(f"{out_dir}/y_test_multi.csv", index=False)
+    def _save_csv(obj, filepath):
+        obj.to_csv(filepath, index=False, chunksize=50000)
 
-    ig_ranked.to_csv(f"{out_dir}/feature_ranking_ig.csv", index=False)
-    rfe_ranked.to_csv(f"{out_dir}/feature_ranking_rfe.csv", index=False)
+    _save_csv(ig_ranked, f"{out_dir}/feature_ranking_ig.csv")
+    _save_csv(rfe_ranked, f"{out_dir}/feature_ranking_rfe.csv")
 
-    X_train_sel.to_csv(f"{out_dir}/X_train_selected.csv", index=False)
-    X_val_sel.to_csv(f"{out_dir}/X_val_selected.csv", index=False)
-    X_test_sel.to_csv(f"{out_dir}/X_test_selected.csv", index=False)
+    _save_csv(X_train_sel, f"{out_dir}/X_train_selected.csv")
+    _save_csv(X_val_sel, f"{out_dir}/X_val_selected.csv")
+    _save_csv(X_test_sel, f"{out_dir}/X_test_selected.csv")
 
-    X_train_resampled.to_csv(f"{out_dir}/X_train_resampled.csv", index=False)
-    y_train_resampled.to_csv(f"{out_dir}/y_train_resampled.csv", index=False)
+    _save_csv(X_train_resampled, f"{out_dir}/X_train_resampled.csv")
+    _save_csv(y_train_resampled, f"{out_dir}/y_train_resampled.csv")
+
+    _save_csv(result.y_train_bin, f"{out_dir}/y_train_bin.csv")
+    _save_csv(result.y_val_bin, f"{out_dir}/y_val_bin.csv")
+    _save_csv(result.y_test_bin, f"{out_dir}/y_test_bin.csv")
+    _save_csv(result.y_train_multi, f"{out_dir}/y_train_multi.csv")
+    _save_csv(result.y_val_multi, f"{out_dir}/y_val_multi.csv")
+    _save_csv(result.y_test_multi, f"{out_dir}/y_test_multi.csv")
+
+    _save_csv(result.X_train, f"{out_dir}/X_train.csv")
+    _save_csv(result.X_val, f"{out_dir}/X_val.csv")
+    _save_csv(result.X_test, f"{out_dir}/X_test.csv")
 
     with open(f"{out_dir}/selected_features.json", "w") as f:
         json.dump(final_features, f, indent=2)
@@ -138,7 +146,7 @@ def run_stage1(dataset_name: str, raw_path: str, top_k_features: int = 20, out_d
         pickle.dump(result.scaler, f)
     log(f"Saved fitted StandardScaler to {out_dir}/scaler.pkl (required by Stage 6 for live inference)")
 
-    with open(f"{out_dir}/stage1_report.txt", "w") as f:
+    with open(f"{out_dir}/stage1_report.txt", "w", encoding="utf-8", errors="replace") as f:
         f.write("\n".join(report_lines))
 
     log(f"\n>>> Stage 1 complete. All artifacts written to: {out_dir}")

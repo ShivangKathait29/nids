@@ -101,7 +101,6 @@ def clean_and_split(
     at the real, untouched class distribution.
     """
     log = []
-    df = df.copy()
     n_start = len(df)
 
     default_drops = ["source_dataset", "flow_id", "timestamp", "src_ip", "dst_ip", "srcip", "dstip"]

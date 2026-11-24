@@ -164,7 +164,8 @@ def run_stage4(
     # --- 6. Data-efficiency sweep ---
     log(f"\n>>> Running data-efficiency sweep (varying fine-tune sample size)")
     sweep_df = _data_efficiency_sweep(
-        X_source_scaled, y_source, X_target_scaled, y_target, ModelClass, random_state, log
+        X_source_scaled, y_source, X_target_scaled, y_target, ModelClass, random_state, log,
+        source_model=zero_shot_model,
     )
     sweep_df.to_csv(f"{out_dir}/data_efficiency_sweep.csv", index=False)
 
@@ -173,14 +174,14 @@ def run_stage4(
     _plot_data_efficiency(sweep_df, out_dir)
     log(f"\nSaved comparison_chart.png and data_efficiency_curve.png to {out_dir}")
 
-    with open(f"{out_dir}/stage4_report.txt", "w") as f:
+    with open(f"{out_dir}/stage4_report.txt", "w", encoding="utf-8", errors="replace") as f:
         f.write("\n".join(report_lines))
 
     log(f"\n>>> Stage 4 complete. All artifacts written to: {out_dir}")
     return comparison_df, sweep_df
 
 
-def _data_efficiency_sweep(X_source, y_source, X_target, y_target, ModelClass, random_state, log):
+def _data_efficiency_sweep(X_source, y_source, X_target, y_target, ModelClass, random_state, log, source_model=None):
     fractions = [0.02, 0.05, 0.10, 0.20, 0.40]
     rows = []
 
@@ -189,8 +190,9 @@ def _data_efficiency_sweep(X_source, y_source, X_target, y_target, ModelClass, r
         X_target, y_target, test_size=0.5, random_state=random_state, stratify=y_target
     )
 
-    source_model = ModelClass(random_state=random_state)
-    source_model.fit_source(X_source, y_source)
+    if source_model is None:
+        source_model = ModelClass(random_state=random_state)
+        source_model.fit_source(X_source, y_source)
 
     for frac in fractions:
         n_samples = max(10, int(frac * len(X_target)))

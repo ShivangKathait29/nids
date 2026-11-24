@@ -128,13 +128,30 @@ class LangChainGeminiProvider(BaseLLMProvider):
 
     def __init__(
         self,
-        model: str = "gemini-3.6-flash",
+        model: str = "gemini-2.0-flash",
         temperature: float = 0.3
     ):
         from google import genai
         from google.genai import types
 
-        api_key = os.environ.get("GOOGLE_API_KEY")
+        api_key = os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")
+
+        if not api_key:
+            # Try to read from .env if present
+            root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+            for env_path in [os.path.join(root_dir, ".env"), os.path.join(root_dir, "nids_stage6", ".env")]:
+                if os.path.exists(env_path):
+                    try:
+                        with open(env_path, "r", encoding="utf-8") as f:
+                            for line in f:
+                                if line.strip().startswith("GOOGLE_API_KEY="):
+                                    api_key = line.strip().split("=", 1)[1].strip().strip('"').strip("'")
+                                    os.environ["GOOGLE_API_KEY"] = api_key
+                                    break
+                    except Exception:
+                        pass
+                if api_key:
+                    break
 
         if not api_key:
             raise RuntimeError(
@@ -145,7 +162,7 @@ class LangChainGeminiProvider(BaseLLMProvider):
             api_key=api_key
         )
         self.types = types
-        self.model = model
+        self.model = os.environ.get("GEMINI_MODEL", model)
         self.temperature = temperature
 
     def generate(
@@ -547,13 +564,10 @@ def get_llm_provider(
     # --------------------------------------------------------
 
     def try_gemini():
-
-        if not os.environ.get("GOOGLE_API_KEY"):
-
+        if not (os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")):
             raise RuntimeError(
-                "GOOGLE_API_KEY not set"
+                "GOOGLE_API_KEY or GEMINI_API_KEY not set"
             )
-
         return LangChainGeminiProvider()
 
     # --------------------------------------------------------

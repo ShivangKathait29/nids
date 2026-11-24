@@ -94,8 +94,17 @@ def train_tune_evaluate(
         4. log everything to the experiment tracker
     """
     with tracker.start_run(run_name=f"{model_key}_{dataset_name}"):
+        import gc
+        gc.collect()
         t0 = time.time()
-        model.fit(X_train, y_train)
+        try:
+            model.fit(X_train, y_train)
+        except Exception as e:
+            log(f"  ⚠️ Warning: Fitting {model_label} failed ({e}). Falling back to HistGradientBoosting...")
+            from sklearn.ensemble import HistGradientBoostingClassifier
+            model = HistGradientBoostingClassifier(max_iter=100, random_state=42)
+            model.fit(X_train, y_train)
+            model_label = f"{model_label} [FALLBACK: HistGradientBoosting]"
         train_time = time.time() - t0
 
         if hasattr(model, "predict_proba"):
@@ -182,7 +191,7 @@ def run_stage2(dataset_name: str, stage1_dir: str, out_dir: str = None, latency_
     report["selected_ccp_alpha"] = idrf.best_ccp_alpha_
     results.append(report)
     trained_models["idrandom_forest"] = idrf
-    with open(f"{out_dir}/pruning_log.txt", "w") as f:
+    with open(f"{out_dir}/pruning_log.txt", "w", encoding="utf-8") as f:
         f.write("\n".join(idrf.pruning_log_))
     for line in idrf.pruning_log_:
         log("    " + line)
@@ -268,7 +277,7 @@ def run_stage2(dataset_name: str, stage1_dir: str, out_dir: str = None, latency_
             "A fast, small, low-recall model is not a good IDS."
         )
 
-    with open(f"{out_dir}/stage2_report.txt", "w") as f:
+    with open(f"{out_dir}/stage2_report.txt", "w", encoding="utf-8") as f:
         f.write("\n".join(report_lines))
 
     log(f"\n>>> Stage 2 complete. All artifacts written to: {out_dir}")

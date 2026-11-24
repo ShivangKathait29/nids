@@ -46,19 +46,19 @@ class ExperimentTracker:
 
         try:
             import mlflow
-            mlflow.set_tracking_uri(f"file:{os.path.abspath(out_dir)}/mlruns")
+            from pathlib import Path
+            os.environ["MLFLOW_ALLOW_FILE_STORE"] = "true"
+            db_path = Path(out_dir, "mlflow.db").resolve().as_posix()
+            mlflow.set_tracking_uri(f"sqlite:///{db_path}")
             mlflow.set_experiment(experiment_name)
             self._mlflow = mlflow
             self.use_mlflow = True
-            print(f"[ExperimentTracker] MLflow available — logging to {out_dir}/mlruns "
-                  f"(run `mlflow ui --backend-store-uri file:{os.path.abspath(out_dir)}/mlruns` to view)")
-        except ImportError:
+            print(f"[ExperimentTracker] MLflow available — logging to sqlite:///{db_path} "
+                  f"(run `mlflow ui --backend-store-uri sqlite:///{db_path}` to view)")
+        except Exception as e:
             print(
-                "[ExperimentTracker] MLflow not installed in this environment "
-                "(no network access here to pip install). Falling back to local JSON "
-                f"logging at {self._local_log_path}. Run `pip install mlflow` on your "
-                "machine for the full MLflow UI experience — this code will use it "
-                "automatically once it's available, no changes needed."
+                f"[ExperimentTracker] MLflow tracking initialization failed ({e}). "
+                f"Falling back to local JSON logging at {self._local_log_path}."
             )
 
     def start_run(self, run_name: str):
@@ -89,25 +89,26 @@ class ExperimentTracker:
             self._current_run_log["metrics"].update(metrics)
 
     def log_model(self, model, artifact_name: str):
+        import pickle
+        model_dir = os.path.join(self.out_dir, "models")
+        os.makedirs(model_dir, exist_ok=True)
+        local_path = os.path.join(model_dir, f"{artifact_name}.pkl")
+        with open(local_path, "wb") as f:
+            pickle.dump(model, f)
+
         if self.use_mlflow:
             try:
                 import mlflow.sklearn
                 mlflow.sklearn.log_model(model, artifact_name)
             except Exception as e:
-                print(f"[ExperimentTracker] Could not log model via mlflow.sklearn: {e}")
+                pass
         else:
-            import pickle
-            model_dir = os.path.join(self.out_dir, "models")
-            os.makedirs(model_dir, exist_ok=True)
-            path = os.path.join(model_dir, f"{artifact_name}.pkl")
-            with open(path, "wb") as f:
-                pickle.dump(model, f)
-            self._current_run_log["artifacts"].append(path)
+            self._current_run_log["artifacts"].append(local_path)
 
     def _finalize_local_run(self):
         """Called automatically when a non-mlflow run's context manager exits."""
         if self._current_run_log is not None:
-            with open(self._local_log_path, "a") as f:
+            with open(self._local_log_path, "a", encoding="utf-8") as f:
                 f.write(json.dumps(self._current_run_log) + "\n")
             print(f"[ExperimentTracker] Logged run '{self._current_run_log['run_name']}' "
                   f"to {self._local_log_path}")
